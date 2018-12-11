@@ -163,13 +163,13 @@ int main(int argc, char** argv)
          "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
          "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
          "fmla    v10.8h, v8.8h, v9.8h\n\t\t"
-         ".byte 0x0a, 0x0d, 0x49, 0x4e\n\t\t # fmla v10.8h, v8.8h, v9.8h"
+         ".byte 0x0a, 0x0d, 0x49, 0x4e\n\t\t"// fmla v10.8h, v8.8h, v9.8h
          "fmla    v10.8h, v7.8h, v9.8h\n\t\t"
-         ".byte 0xea, 0x0c, 0x49, 0x4e\n\t\t # fmla v10.8h, v7.8h, v9.8h"
+         ".byte 0xea, 0x0c, 0x49, 0x4e\n\t\t"//  fmla v10.8h, v7.8h, v9.8h
          "fmla    v10.8h, v6.8h, v9.8h\n\t\t"
-         ".byte 0xca, 0x0c, 0x49, 0x4e\n\t\t # fmla v10.8h, v6.8h, v9.8h"
+         ".byte 0xca, 0x0c, 0x49, 0x4e\n\t\t" // # fmla v10.8h, v6.8h, v9.8h
          "fmla    v10.8h, v5.8h, v9.8h\n\t\t"
-         ".byte 0xaa, 0x0c, 0x49, 0x4e\n\t\t # fmla v10.8h, v5.8h, v9.8h"
+         ".byte 0xaa, 0x0c, 0x49, 0x4e\n\t\t" // # fmla v10.8h, v5.8h, v9.8h
          "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
          "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
          "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
