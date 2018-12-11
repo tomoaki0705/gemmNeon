@@ -131,5 +131,50 @@ int main(int argc, char** argv)
     delete [] A;
     delete [] B;
     delete [] C;
+    {
+        float16_t value[] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, };
+        float16_t resultWrite[8];
+        float16x8_t a = vld1q_f16(value + 0);
+        float16x8_t b = vld1q_f16(value + 8);
+        float16x8_t c = vld1q_f16(value + 16);
+        float16x8_t result = vfmaq_f16(a, b, c);
+        float16x4_t s0 = vld1_f16(value + 0);
+        float16x4_t s1 = vld1_f16(value + 4);
+        volatile float16x8_t result0 = vfmaq_lane_f16(a, b, s0, 0);
+        volatile float16x8_t result1 = vfmaq_lane_f16(a, b, s0, 1);
+        volatile float16x8_t result2 = vfmaq_lane_f16(a, b, s0, 2);
+        volatile float16x8_t result3 = vfmaq_lane_f16(a, b, s0, 3);
+        volatile float16x8_t result4 = vfmaq_lane_f16(a, b, s1, 0);
+        volatile float16x8_t result5 = vfmaq_lane_f16(a, b, s1, 1);
+        volatile float16x8_t result6 = vfmaq_lane_f16(a, b, s1, 2);
+        volatile float16x8_t result7 = vfmaq_lane_f16(a, b, s1, 3);
+        vst1q_f16(resultWrite, result);
+        std::cout << resultWrite << std::endl;
+        asm __volatile__(
+         //".byte 0x4e, 0x5f, 0x0f, 0xff\n\t\t"
+         "fmla    v16.8h, v16.8h, v17.8h\n\t\t"
+         ".byte 0xff, 0x0f, 0x45, 0x4e\n\t\t # fmla v31.8h v31.8h v31.8h"
+         "fmla    v16.8h, v16.8h, v17.8h\n\t\t"
+         "fmla    v5.8h, v0.8h, v17.8h\n\t\t"
+         ".byte 0x2a, 0x0c, 0x45, 0x4e\n\t\t # fmla v10.8h v1.8h  v5.8h"
+         //".byte 0x4e, 0x45, 0x0c, 0x2a\n\t\t"
+         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
+         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
+         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
+         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
+         "fmla    v10.8h, v8.8h, v9.8h\n\t\t"
+         ".byte 0x0a, 0x0d, 0x49, 0x4e\n\t\t # fmla v10.8h, v8.8h, v9.8h"
+         "fmla    v10.8h, v7.8h, v9.8h\n\t\t"
+         ".byte 0xea, 0x0c, 0x49, 0x4e\n\t\t # fmla v10.8h, v7.8h, v9.8h"
+         "fmla    v10.8h, v6.8h, v9.8h\n\t\t"
+         ".byte 0xca, 0x0c, 0x49, 0x4e\n\t\t # fmla v10.8h, v6.8h, v9.8h"
+         "fmla    v10.8h, v5.8h, v9.8h\n\t\t"
+         ".byte 0xaa, 0x0c, 0x49, 0x4e\n\t\t # fmla v10.8h, v5.8h, v9.8h"
+         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
+         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
+         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
+         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
+         );
+    }
     return 0;
 }
