@@ -5,12 +5,17 @@
 #include <cstring>
 #include <vector>
 #include <algorithm>
+#if HAVE_ASIMDHP
+const int maxMethod = 16;
+#else
+const int maxMethod = 10;
+#endif
 
 int main(int argc, char** argv)
 {
     int method = 0;
     if (2 <= argc)
-        method = std::min(std::max(atoi(argv[1]), 0), 16);
+        method = std::min(std::max(atoi(argv[1]), 0), maxMethod);
     uint64_t N = 512;
     if (3 <= argc)
         N = std::max(atoi(argv[2]), 8);
@@ -303,6 +308,7 @@ int main(int argc, char** argv)
                     Ch[i*N+j] += Ah[i*N+k] * Bh[k*N+j];
             }
             break;
+#if HAVE_ASIMDHP
         case 16:
             {
                 std::cout << "16" << std::endl;
@@ -375,6 +381,7 @@ int main(int argc, char** argv)
                 }
             }
             break;
+#endif
         }
         
         auto end = std::chrono::system_clock::now();
@@ -394,6 +401,7 @@ int main(int argc, char** argv)
     delete [] A;
     delete [] B;
     delete [] C;
+#if HAVE_ASIMDHP
     {
         float16_t value[] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, };
 	float16_t resultWrite[8];
@@ -404,5 +412,6 @@ int main(int argc, char** argv)
 	vst1q_f16(resultWrite, result);
 	std::cout << resultWrite << std::endl;
     }
+#endif
     return 0;
 }
