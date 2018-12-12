@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 {
     int method = 0;
     if (2 <= argc)
-        method = std::min(std::max(atoi(argv[1]), 0), 1);
+        method = std::min(std::max(atoi(argv[1]), 0), 4);
     uint64_t N = 512;
     if (3 <= argc)
         N = std::max(atoi(argv[2]), 8);
@@ -86,6 +86,7 @@ int main(int argc, char** argv)
             }
             break;
         case 2:
+	    std::cout << "22222" << std::endl;
             for (int i0 = 0;i0 < N;i0 += 4)
             for (int j0 = 0;j0 < N;j0 += 4)
             {
@@ -112,6 +113,76 @@ int main(int argc, char** argv)
                 vst1q_f32(C+(i0+3)*N+j0, vC3);
             }
             break;
+        case 3:
+	    std::cout << "33333" << std::endl;
+            for (int i0 = 0;i0 < N;i0 += 4)
+            for (int j0 = 0;j0 < N;j0 += 4)
+            {
+                float32x4_t vC0 = vdupq_n_f32(0);
+                float32x4_t vC1 = vdupq_n_f32(0);
+                float32x4_t vC2 = vdupq_n_f32(0);
+                float32x4_t vC3 = vdupq_n_f32(0);
+                for (int k = 0;k < N;k++)
+                {
+                    float32x4_t vA0 = vdupq_n_f32(A[(i0+0)*N+k]);
+                    float32x4_t vA1 = vdupq_n_f32(A[(i0+1)*N+k]);
+                    float32x4_t vA2 = vdupq_n_f32(A[(i0+2)*N+k]);
+                    float32x4_t vA3 = vdupq_n_f32(A[(i0+3)*N+k]);
+                    float32x4_t vB = vld1q_f32(&B[k*N+j0]);
+
+                    vC0 = vmlaq_f32(vC0, vB, vA0);
+                    vC1 = vmlaq_f32(vC1, vB, vA1);
+                    vC2 = vmlaq_f32(vC2, vB, vA2);
+                    vC3 = vmlaq_f32(vC3, vB, vA3);
+
+                }
+                vst1q_f32(C+(i0+0)*N+j0, vC0);
+                vst1q_f32(C+(i0+1)*N+j0, vC1);
+                vst1q_f32(C+(i0+2)*N+j0, vC2);
+                vst1q_f32(C+(i0+3)*N+j0, vC3);
+            }
+            break;
+        case 4:
+	    std::cout << "44444" << std::endl;
+            for (int i0 = 0;i0 < N;i0 += 8)
+            for (int j0 = 0;j0 < N;j0 += 4)
+            {
+                float32x4_t vC0 = vdupq_n_f32(0);
+                float32x4_t vC1 = vdupq_n_f32(0);
+                float32x4_t vC2 = vdupq_n_f32(0);
+                float32x4_t vC3 = vdupq_n_f32(0);
+                float32x4_t vC4 = vdupq_n_f32(0);
+                float32x4_t vC5 = vdupq_n_f32(0);
+                float32x4_t vC6 = vdupq_n_f32(0);
+                float32x4_t vC7 = vdupq_n_f32(0);
+                for (int k = 0;k < N;k++)
+                {
+                    float32x4_t vA0 = vdupq_n_f32(A[(i0+0)*N+k]);
+                    float32x4_t vA1 = vdupq_n_f32(A[(i0+1)*N+k]);
+                    float32x4_t vA2 = vdupq_n_f32(A[(i0+2)*N+k]);
+                    float32x4_t vA3 = vdupq_n_f32(A[(i0+3)*N+k]);
+                    float32x4_t vB0 = vld1q_f32(&B[(k+0)*N+j0]);
+                    float32x4_t vB1 = vld1q_f32(&B[(k+1)*N+j0]);
+
+                    vC0 = vmlaq_f32(vC0, vB0, vA0);
+                    vC1 = vmlaq_f32(vC1, vB0, vA1);
+                    vC2 = vmlaq_f32(vC2, vB0, vA2);
+                    vC3 = vmlaq_f32(vC3, vB0, vA3);
+                    vC4 = vmlaq_f32(vC4, vB1, vA0);
+                    vC5 = vmlaq_f32(vC5, vB1, vA1);
+                    vC6 = vmlaq_f32(vC6, vB1, vA2);
+                    vC7 = vmlaq_f32(vC7, vB1, vA3);
+                }
+                vst1q_f32(C+(i0+0)*N+j0, vC0);
+                vst1q_f32(C+(i0+1)*N+j0, vC1);
+                vst1q_f32(C+(i0+2)*N+j0, vC2);
+                vst1q_f32(C+(i0+3)*N+j0, vC3);
+                vst1q_f32(C+(i0+4)*N+j0, vC4);
+                vst1q_f32(C+(i0+5)*N+j0, vC5);
+                vst1q_f32(C+(i0+6)*N+j0, vC6);
+                vst1q_f32(C+(i0+7)*N+j0, vC7);
+            }
+            break;
         }
         
         auto end = std::chrono::system_clock::now();
@@ -133,48 +204,13 @@ int main(int argc, char** argv)
     delete [] C;
     {
         float16_t value[] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, };
-        float16_t resultWrite[8];
-        float16x8_t a = vld1q_f16(value + 0);
-        float16x8_t b = vld1q_f16(value + 8);
-        float16x8_t c = vld1q_f16(value + 16);
-        float16x8_t result = vfmaq_f16(a, b, c);
-        float16x4_t s0 = vld1_f16(value + 0);
-        float16x4_t s1 = vld1_f16(value + 4);
-        volatile float16x8_t result0 = vfmaq_lane_f16(a, b, s0, 0);
-        volatile float16x8_t result1 = vfmaq_lane_f16(a, b, s0, 1);
-        volatile float16x8_t result2 = vfmaq_lane_f16(a, b, s0, 2);
-        volatile float16x8_t result3 = vfmaq_lane_f16(a, b, s0, 3);
-        volatile float16x8_t result4 = vfmaq_lane_f16(a, b, s1, 0);
-        volatile float16x8_t result5 = vfmaq_lane_f16(a, b, s1, 1);
-        volatile float16x8_t result6 = vfmaq_lane_f16(a, b, s1, 2);
-        volatile float16x8_t result7 = vfmaq_lane_f16(a, b, s1, 3);
-        vst1q_f16(resultWrite, result);
-        std::cout << resultWrite << std::endl;
-        asm __volatile__(
-         //".byte 0x4e, 0x5f, 0x0f, 0xff\n\t\t"
-         "fmla    v16.8h, v16.8h, v17.8h\n\t\t"
-         ".byte 0xff, 0x0f, 0x45, 0x4e\n\t\t # fmla v31.8h v31.8h v31.8h"
-         "fmla    v16.8h, v16.8h, v17.8h\n\t\t"
-         "fmla    v5.8h, v0.8h, v17.8h\n\t\t"
-         ".byte 0x2a, 0x0c, 0x45, 0x4e\n\t\t # fmla v10.8h v1.8h  v5.8h"
-         //".byte 0x4e, 0x45, 0x0c, 0x2a\n\t\t"
-         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
-         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
-         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
-         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
-         "fmla    v10.8h, v8.8h, v9.8h\n\t\t"
-         ".byte 0x0a, 0x0d, 0x49, 0x4e\n\t\t"// fmla v10.8h, v8.8h, v9.8h
-         "fmla    v10.8h, v7.8h, v9.8h\n\t\t"
-         ".byte 0xea, 0x0c, 0x49, 0x4e\n\t\t"//  fmla v10.8h, v7.8h, v9.8h
-         "fmla    v10.8h, v6.8h, v9.8h\n\t\t"
-         ".byte 0xca, 0x0c, 0x49, 0x4e\n\t\t" // # fmla v10.8h, v6.8h, v9.8h
-         "fmla    v10.8h, v5.8h, v9.8h\n\t\t"
-         ".byte 0xaa, 0x0c, 0x49, 0x4e\n\t\t" // # fmla v10.8h, v5.8h, v9.8h
-         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
-         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
-         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
-         "fmla    v31.8h, v31.8h, v31.8h\n\t\t"
-         );
+	float16_t resultWrite[8];
+	float16x8_t a = vld1q_f16(value + 0);
+	float16x8_t b = vld1q_f16(value + 8);
+	float16x8_t c = vld1q_f16(value + 16);
+	float16x8_t result = vfmaq_f16(a, b, c);
+	vst1q_f16(resultWrite, result);
+	std::cout << resultWrite << std::endl;
     }
     return 0;
 }
