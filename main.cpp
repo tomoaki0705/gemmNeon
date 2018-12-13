@@ -320,42 +320,54 @@ int main(int argc, char** argv)
                 float32x4_t vC33 = vdupq_n_f32(0);
                 for (int k = 0;k < N;k++)
                 {
-			float* pointer = &A[(i0+0)*N+k];
-                    float32x2_t vA0 = vld1_f32(&A[(i0+0)*N+k]);
-                    float32x2_t vA1 = vld1_f32(&A[(i0+1)*N+k]);
-                    float32x2_t vA2 = vld1_f32(&A[(i0+2)*N+k]);
-                    float32x2_t vA3 = vld1_f32(&A[(i0+3)*N+k]);
+                    float* pointer0 = &A[(i0+0)*N+k];
+                    float* pointer1 = &A[(i0+1)*N+k];
+                    float* pointer2 = &A[(i0+2)*N+k];
+                    float* pointer3 = &A[(i0+3)*N+k];
+		    float32x4_t vA0, vA1, vA2, vA3;
+
+                    asm(
+                        "ld1r {%[a0].4s}, [%[pa0]]\n\t\t"
+                        "ld1r {%[a1].4s}, [%[pa1]]\n\t\t"
+                        "ld1r {%[a2].4s}, [%[pa2]]\n\t\t"
+                        "ld1r {%[a3].4s}, [%[pa3]]\n\t\t"
+			:[a0]"=w"(vA0) ,[a1]"=w" (vA1),[a2]"=w" (vA2),[a3]"=w"(vA3)
+			:[pa0]"r"(pointer0) ,[pa1]"r"(pointer1) ,[pa2]"r"(pointer2) ,[pa3]"r"(pointer3)
+		       );
                     float32x4_t vB0 = vld1q_f32(&B[(k+0)*N+j0+0 ]);
                     float32x4_t vB1 = vld1q_f32(&B[(k+0)*N+j0+4 ]);
                     float32x4_t vB2 = vld1q_f32(&B[(k+0)*N+j0+8 ]);
                     float32x4_t vB3 = vld1q_f32(&B[(k+0)*N+j0+12]);
 
                     asm(
-                        "ld1r {%[a0].4s}, [%[pa]]\n\t\t"
-                        "fmla %[c00].4s, %[b0].4s, %[a0].s[0]\n\t\t"
-                        /*"fmla %[c01].4s, %[b0].4s, %[a1].s[0]\n\t\t"*/
-                        /*"fmla %[c02].4s, %[b0].4s, %[a2].s[0]\n\t\t"*/
-                        /*"fmla %[c03].4s, %[b0].4s, %[a3].s[0]\n\t\t"*/
-                        /*"fmla %[c10].4s, %[b1].4s, %[a0].s[0]\n\t\t"*/
-                        /*"fmla %[c11].4s, %[b1].4s, %[a1].s[0]\n\t\t"*/
-                        /*"fmla %[c12].4s, %[b1].4s, %[a2].s[0]\n\t\t"*/
-                        /*"fmla %[c13].4s, %[b1].4s, %[a3].s[0]\n\t\t"*/
-                        /*"fmla %[c20].4s, %[b2].4s, %[a0].s[0]\n\t\t"*/
-                        /*"fmla %[c21].4s, %[b2].4s, %[a1].s[0]\n\t\t"*/
-                        /*"fmla %[c22].4s, %[b2].4s, %[a2].s[0]\n\t\t"*/
-                        /*"fmla %[c23].4s, %[b2].4s, %[a3].s[0]\n\t\t"*/
-                        /*:[c00]"+r"(vC00),[c01]"+r"(vC01),[c02]"+r"(vC02),[c03]"+r"(vC03) ,[c10]"+r"(vC10),[c11]"+r"(vC11),[c12]"+r"(vC12),[c13]"+r"(vC13) ,[c20]"+r"(vC20),[c21]"+r"(vC21),[c22]"+r"(vC22),[c23]"+r"(vC23)*/
-                        /*:[b0]"r"(vB0),[b1]"r"(vB1),[b2]"r"(vB2) ,[a0]"r"(vA0),[a1]"r"(vA1),[a2]"r"(vA2),[a3]"r"(vA3)a*/
-			:[c00]"+w"(vC00), [a0]"+w"(vA0)
-			:[b0]"w"(vB0),[pa]"r"(pointer)
+                        "fmla %[c00].4s, %[b0].4s, %[a0].4s\n\t\t"
+                        "fmla %[c01].4s, %[b0].4s, %[a1].4s\n\t\t"
+                        "fmla %[c02].4s, %[b0].4s, %[a2].4s\n\t\t"
+                        "fmla %[c03].4s, %[b0].4s, %[a3].4s\n\t\t"
+                        "fmla %[c10].4s, %[b1].4s, %[a0].4s\n\t\t"
+                        "fmla %[c11].4s, %[b1].4s, %[a1].4s\n\t\t"
+                        "fmla %[c12].4s, %[b1].4s, %[a2].4s\n\t\t"
+                        "fmla %[c13].4s, %[b1].4s, %[a3].4s\n\t\t"
+                        :[c00]"+w"(vC00),[c01]"+w"(vC01),[c02]"+w"(vC02),[c03]"+w"(vC03) 
+		   	,[c10]"+w"(vC10),[c11]"+w"(vC11),[c12]"+w"(vC12),[c13]"+w"(vC13) 
+                        :[b0]"w"(vB0),[b1]"w"(vB1)
+			,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
+		       );
+		    asm(
+                        "fmla %[c20].4s, %[b2].4s, %[a0].4s\n\t\t"
+                        "fmla %[c21].4s, %[b2].4s, %[a1].4s\n\t\t"
+                        "fmla %[c22].4s, %[b2].4s, %[a2].4s\n\t\t"
+                        "fmla %[c23].4s, %[b2].4s, %[a3].4s\n\t\t"
+                        "fmla %[c30].4s, %[b3].4s, %[a0].4s\n\t\t"
+                        "fmla %[c31].4s, %[b3].4s, %[a1].4s\n\t\t"
+                        "fmla %[c32].4s, %[b3].4s, %[a2].4s\n\t\t"
+                        "fmla %[c33].4s, %[b3].4s, %[a3].4s\n\t\t"
+                        :[c20]"+w"(vC20),[c21]"+w"(vC21),[c22]"+w"(vC22),[c23]"+w"(vC23)
+			,[c30]"+w"(vC30),[c31]"+w"(vC31),[c32]"+w"(vC32),[c33]"+w"(vC33)
+                        :[b2]"w"(vB2),[b3]"w"(vB3)
+			,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
                     );
 
-                        /*"fmla %[c30].4s, %[b3].4s, %[a0].s[0]\n\t\t"*/
-                        /*"fmla %[c31].4s, %[b3].4s, %[a1].s[0]\n\t\t"*/
-                        /*"fmla %[c32].4s, %[b3].4s, %[a2].s[0]\n\t\t"*/
-                        /*"fmla %[c33].4s, %[b3].4s, %[a3].s[0]\n\t\t"*/
-                        /*,[c30]"+r"(vC30),[c31]"+r"(vC31),[c32]"+r"(vC32),[c33]"+r"(vC33)*/
-                        /*,[b3]"r"(vB3)*/
                 }
                 vst1q_f32(C+(i0+0)*N+j0+0,  vC00);
                 vst1q_f32(C+(i0+0)*N+j0+4,  vC01);
