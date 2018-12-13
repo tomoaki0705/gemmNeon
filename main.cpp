@@ -543,26 +543,26 @@ int main(int argc, char** argv)
                 float32x4_t vC01 = vdupq_n_f32(0);
                 float32x4_t vC02 = vdupq_n_f32(0);
                 float32x4_t vC03 = vdupq_n_f32(0);
+                float32x4_t vC04 = vdupq_n_f32(0);
                 float32x4_t vC10 = vdupq_n_f32(0);
                 float32x4_t vC11 = vdupq_n_f32(0);
                 float32x4_t vC12 = vdupq_n_f32(0);
                 float32x4_t vC13 = vdupq_n_f32(0);
+                float32x4_t vC14 = vdupq_n_f32(0);
                 float32x4_t vC20 = vdupq_n_f32(0);
                 float32x4_t vC21 = vdupq_n_f32(0);
                 float32x4_t vC22 = vdupq_n_f32(0);
                 float32x4_t vC23 = vdupq_n_f32(0);
+                float32x4_t vC24 = vdupq_n_f32(0);
                 float32x4_t vC30 = vdupq_n_f32(0);
                 float32x4_t vC31 = vdupq_n_f32(0);
                 float32x4_t vC32 = vdupq_n_f32(0);
                 float32x4_t vC33 = vdupq_n_f32(0);
-                float32x4_t vC40 = vdupq_n_f32(0);
-                float32x4_t vC41 = vdupq_n_f32(0);
-                float32x4_t vC42 = vdupq_n_f32(0);
-                float32x4_t vC43 = vdupq_n_f32(0);
+                float32x4_t vC34 = vdupq_n_f32(0);
 	        float32x4_t vA0, vA1, vA2, vA3;
-	        float32x4_t vB0, vB1, vB2, vB3;
+	        float32x4_t vB0, vB1, vB2, vB3, vB4;
 		float32x4_t vA0n, vA1n, vA2n, vA3n;
-                float32x4_t vB0n, vB1n, vB2n, vB3n;
+                float32x4_t vB0n, vB1n, vB2n, vB3n, vB4n;
 		// pre-load
 		{
                     float* pointer0 = &A[(i0+0)*N];
@@ -582,6 +582,7 @@ int main(int argc, char** argv)
                     vB1 = vld1q_f32(&B[j0+4 ]);
                     vB2 = vld1q_f32(&B[j0+8 ]);
                     vB3 = vld1q_f32(&B[j0+12]);
+                    vB4 = vld1q_f32(&B[j0+16]);
 		}
                 for (int k = 0;k < N-1;k++)
                 {
@@ -602,6 +603,7 @@ int main(int argc, char** argv)
                     vB1n = vld1q_f32(&B[(k+1)*N+j0+4 ]);
                     vB2n = vld1q_f32(&B[(k+1)*N+j0+8 ]);
                     vB3n = vld1q_f32(&B[(k+1)*N+j0+12]);
+                    vB4n = vld1q_f32(&B[(k+1)*N+j0+16]);
 
                     asm(
                         "fmla %[c00].4s, %[b0].4s, %[a0].4s\n\t\t"
@@ -631,10 +633,18 @@ int main(int argc, char** argv)
                         :[b2]"w"(vB2),[b3]"w"(vB3)
 			,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
                     );
+		    asm(
+                        "fmla %[c04].4s, %[b4].4s, %[a0].4s\n\t\t"
+                        "fmla %[c14].4s, %[b4].4s, %[a1].4s\n\t\t"
+                        "fmla %[c24].4s, %[b4].4s, %[a2].4s\n\t\t"
+                        "fmla %[c34].4s, %[b4].4s, %[a3].4s\n\t\t"
+			:[c04]"+w"(vC04) ,[c14]"+w"(vC14) ,[c24]"+w"(vC24) ,[c34]"+w"(vC34)
+			:[b4]"w"(vB4) ,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
+		       );
 		    vA0 = vA0n;vB0 = vB0n;
 		    vA1 = vA1n;vB1 = vB1n;
 		    vA2 = vA2n;vB2 = vB2n;
-		    vA3 = vA3n;vB3 = vB3n;
+		    vA3 = vA3n;vB3 = vB3n;vB4 = vB4n;
                 }
 		{
 		    // last loop
@@ -671,18 +681,22 @@ int main(int argc, char** argv)
                 vst1q_f32(C+(i0+0)*N+j0+4,  vC01);
                 vst1q_f32(C+(i0+0)*N+j0+8,  vC02);
                 vst1q_f32(C+(i0+0)*N+j0+12, vC03);
+                vst1q_f32(C+(i0+0)*N+j0+16, vC04);
                 vst1q_f32(C+(i0+1)*N+j0+0,  vC10);
                 vst1q_f32(C+(i0+1)*N+j0+4,  vC11);
                 vst1q_f32(C+(i0+1)*N+j0+8,  vC12);
                 vst1q_f32(C+(i0+1)*N+j0+12, vC13);
+                vst1q_f32(C+(i0+1)*N+j0+16, vC14);
                 vst1q_f32(C+(i0+2)*N+j0+0,  vC20);
                 vst1q_f32(C+(i0+2)*N+j0+4,  vC21);
                 vst1q_f32(C+(i0+2)*N+j0+8,  vC22);
                 vst1q_f32(C+(i0+2)*N+j0+12, vC23);
+                vst1q_f32(C+(i0+2)*N+j0+16, vC24);
                 vst1q_f32(C+(i0+3)*N+j0+0,  vC30);
                 vst1q_f32(C+(i0+3)*N+j0+4,  vC31);
                 vst1q_f32(C+(i0+3)*N+j0+8,  vC32);
                 vst1q_f32(C+(i0+3)*N+j0+12, vC33);
+                vst1q_f32(C+(i0+3)*N+j0+16, vC34);
             }
             break;
         case 10:
