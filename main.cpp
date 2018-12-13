@@ -231,69 +231,69 @@ int main(int argc, char** argv)
             break;
         case 6:
 	    std::cout << "66666" << std::endl;
-            for (int i0 = 0;i0 < N;i0 += 8)
-            for (int j0 = 0;j0 < N;j0 += 8)
+            for (int i0 = 0;i0 < N;i0 += 4)
+            for (int j0 = 0;j0 < N;j0 += 16)
             {
-                float32x4_t vC0 = vdupq_n_f32(0);
-                float32x4_t vC1 = vdupq_n_f32(0);
-                float32x4_t vC2 = vdupq_n_f32(0);
-                float32x4_t vC3 = vdupq_n_f32(0);
-                float32x4_t vC4 = vdupq_n_f32(0);
-                float32x4_t vC5 = vdupq_n_f32(0);
-                float32x4_t vC6 = vdupq_n_f32(0);
-                float32x4_t vC7 = vdupq_n_f32(0);
-                float32x4_t vC8 = vdupq_n_f32(0);
-                float32x4_t vC9 = vdupq_n_f32(0);
+                float32x4_t vC00 = vdupq_n_f32(0);
+                float32x4_t vC01 = vdupq_n_f32(0);
+                float32x4_t vC02 = vdupq_n_f32(0);
+                float32x4_t vC03 = vdupq_n_f32(0);
                 float32x4_t vC10 = vdupq_n_f32(0);
                 float32x4_t vC11 = vdupq_n_f32(0);
                 float32x4_t vC12 = vdupq_n_f32(0);
                 float32x4_t vC13 = vdupq_n_f32(0);
-                float32x4_t vC14 = vdupq_n_f32(0);
-                float32x4_t vC15 = vdupq_n_f32(0);
+                float32x4_t vC20 = vdupq_n_f32(0);
+                float32x4_t vC21 = vdupq_n_f32(0);
+                float32x4_t vC22 = vdupq_n_f32(0);
+                float32x4_t vC23 = vdupq_n_f32(0);
+                float32x4_t vC30 = vdupq_n_f32(0);
+                float32x4_t vC31 = vdupq_n_f32(0);
+                float32x4_t vC32 = vdupq_n_f32(0);
+                float32x4_t vC33 = vdupq_n_f32(0);
                 for (int k = 0;k < N;k++)
                 {
-                    float32x4_t vA0 = vdupq_n_f32(A[(i0+0)*N+k]);
-                    float32x4_t vA1 = vdupq_n_f32(A[(i0+1)*N+k]);
-                    float32x4_t vA2 = vdupq_n_f32(A[(i0+2)*N+k]);
-                    float32x4_t vA3 = vdupq_n_f32(A[(i0+3)*N+k]);
-                    float32x4_t vB0 = vld1q_f32(&B[(k+0)*N+j0]);
-                    float32x4_t vB1 = vld1q_f32(&B[(k+1)*N+j0]);
-                    float32x4_t vB2 = vld1q_f32(&B[(k+2)*N+j0]);
-                    float32x4_t vB3 = vld1q_f32(&B[(k+3)*N+j0]);
+                    float32x2_t vA0 = vld1_f32(&A[(i0+0)*N+k]);
+                    float32x2_t vA1 = vld1_f32(&A[(i0+1)*N+k]);
+                    float32x2_t vA2 = vld1_f32(&A[(i0+2)*N+k]);
+                    float32x2_t vA3 = vld1_f32(&A[(i0+3)*N+k]);
+                    float32x4_t vB0 = vld1q_f32(&B[(k+0)*N+j0+0 ]);
+                    float32x4_t vB1 = vld1q_f32(&B[(k+0)*N+j0+4 ]);
+                    float32x4_t vB2 = vld1q_f32(&B[(k+0)*N+j0+8 ]);
+                    float32x4_t vB3 = vld1q_f32(&B[(k+0)*N+j0+12]);
 
-                    vC0 = vmlaq_f32(vC0, vB0, vA0);
-                    vC1 = vmlaq_f32(vC1, vB0, vA1);
-                    vC2 = vmlaq_f32(vC2, vB0, vA2);
-                    vC3 = vmlaq_f32(vC3, vB0, vA3);
-                    vC4 = vmlaq_f32(vC4, vB1, vA0);
-                    vC5 = vmlaq_f32(vC5, vB1, vA1);
-                    vC6 = vmlaq_f32(vC6, vB1, vA2);
-                    vC7 = vmlaq_f32(vC7, vB1, vA3);
-                    vC8 = vmlaq_f32(vC8, vB2, vA0);
-                    vC9 = vmlaq_f32(vC9, vB2, vA1);
-                    vC10 = vmlaq_f32(vC10, vB2, vA2);
-                    vC11 = vmlaq_f32(vC11, vB2, vA3);
-                    vC12 = vmlaq_f32(vC12, vB3, vA0);
-                    vC13 = vmlaq_f32(vC13, vB3, vA1);
-                    vC14 = vmlaq_f32(vC14, vB3, vA2);
-                    vC15 = vmlaq_f32(vC15, vB3, vA3);
+                    vC00 = vmlaq_lane_f32(vC00, vB0, vA0, 0);
+                    vC01 = vmlaq_lane_f32(vC01, vB0, vA1, 0);
+                    vC02 = vmlaq_lane_f32(vC02, vB0, vA2, 0);
+                    vC03 = vmlaq_lane_f32(vC03, vB0, vA3, 0);
+                    vC10 = vmlaq_lane_f32(vC10, vB1, vA0, 0);
+                    vC11 = vmlaq_lane_f32(vC11, vB1, vA1, 0);
+                    vC12 = vmlaq_lane_f32(vC12, vB1, vA2, 0);
+                    vC13 = vmlaq_lane_f32(vC13, vB1, vA3, 0);
+                    vC20 = vmlaq_lane_f32(vC20, vB2, vA0, 0);
+                    vC21 = vmlaq_lane_f32(vC21, vB2, vA1, 0);
+                    vC22 = vmlaq_lane_f32(vC22, vB2, vA2, 0);
+                    vC23 = vmlaq_lane_f32(vC23, vB2, vA3, 0);
+                    vC30 = vmlaq_lane_f32(vC30, vB3, vA0, 0);
+                    vC31 = vmlaq_lane_f32(vC31, vB3, vA1, 0);
+                    vC32 = vmlaq_lane_f32(vC32, vB3, vA2, 0);
+                    vC33 = vmlaq_lane_f32(vC33, vB3, vA3, 0);
                 }
-                vst1q_f32(C+(i0+0)*N+j0+0, vC0);
-                vst1q_f32(C+(i0+1)*N+j0+0, vC1);
-                vst1q_f32(C+(i0+2)*N+j0+0, vC2);
-                vst1q_f32(C+(i0+3)*N+j0+0, vC3);
-                vst1q_f32(C+(i0+4)*N+j0+0, vC4);
-                vst1q_f32(C+(i0+5)*N+j0+0, vC5);
-                vst1q_f32(C+(i0+6)*N+j0+0, vC6);
-                vst1q_f32(C+(i0+7)*N+j0+0, vC7);
-                vst1q_f32(C+(i0+0)*N+j0+4, vC8);
-                vst1q_f32(C+(i0+1)*N+j0+4, vC9);
-                vst1q_f32(C+(i0+2)*N+j0+4, vC10);
-                vst1q_f32(C+(i0+3)*N+j0+4, vC11);
-                vst1q_f32(C+(i0+0)*N+j0+4, vC12);
-                vst1q_f32(C+(i0+1)*N+j0+4, vC13);
-                vst1q_f32(C+(i0+2)*N+j0+4, vC14);
-                vst1q_f32(C+(i0+3)*N+j0+4, vC15);
+                vst1q_f32(C+(i0+0)*N+j0+0,  vC00);
+                vst1q_f32(C+(i0+0)*N+j0+4,  vC01);
+                vst1q_f32(C+(i0+0)*N+j0+8,  vC02);
+                vst1q_f32(C+(i0+0)*N+j0+12, vC03);
+                vst1q_f32(C+(i0+1)*N+j0+0,  vC10);
+                vst1q_f32(C+(i0+1)*N+j0+4,  vC11);
+                vst1q_f32(C+(i0+1)*N+j0+8,  vC12);
+                vst1q_f32(C+(i0+1)*N+j0+12, vC13);
+                vst1q_f32(C+(i0+2)*N+j0+0,  vC20);
+                vst1q_f32(C+(i0+2)*N+j0+4,  vC21);
+                vst1q_f32(C+(i0+2)*N+j0+8,  vC22);
+                vst1q_f32(C+(i0+2)*N+j0+12, vC23);
+                vst1q_f32(C+(i0+3)*N+j0+0,  vC30);
+                vst1q_f32(C+(i0+3)*N+j0+4,  vC31);
+                vst1q_f32(C+(i0+3)*N+j0+8,  vC32);
+                vst1q_f32(C+(i0+3)*N+j0+12, vC33);
             }
             break;
         case 10:
