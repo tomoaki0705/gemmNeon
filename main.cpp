@@ -387,6 +387,117 @@ int main(int argc, char** argv)
                 vst1q_f32(C+(i0+3)*N+j0+12, vC33);
             }
             break;
+        case 8:
+            std::cout << "8888" << std::endl;
+            for (int i0 = 0;i0 < N;i0 += 4)
+            for (int j0 = 0;j0 < N;j0 += 16)
+            {
+		volatile float32x4_t aaaa = vld1q_dup_f32(A);
+                float32x4_t vC00 = vdupq_n_f32(0);
+                float32x4_t vC01 = vdupq_n_f32(0);
+                float32x4_t vC02 = vdupq_n_f32(0);
+                float32x4_t vC03 = vdupq_n_f32(0);
+                float32x4_t vC10 = vdupq_n_f32(0);
+                float32x4_t vC11 = vdupq_n_f32(0);
+                float32x4_t vC12 = vdupq_n_f32(0);
+                float32x4_t vC13 = vdupq_n_f32(0);
+                float32x4_t vC20 = vdupq_n_f32(0);
+                float32x4_t vC21 = vdupq_n_f32(0);
+                float32x4_t vC22 = vdupq_n_f32(0);
+                float32x4_t vC23 = vdupq_n_f32(0);
+                float32x4_t vC30 = vdupq_n_f32(0);
+                float32x4_t vC31 = vdupq_n_f32(0);
+                float32x4_t vC32 = vdupq_n_f32(0);
+                float32x4_t vC33 = vdupq_n_f32(0);
+	        float32x4_t vA0, vA1, vA2, vA3;
+		float32x4_t vA0n, vA1n, vA2n, vA3n;
+		// pre-load
+		{
+                    float* pointer0 = &A[(i0+0)*N];
+                    float* pointer1 = &A[(i0+1)*N];
+                    float* pointer2 = &A[(i0+2)*N];
+                    float* pointer3 = &A[(i0+3)*N];
+
+                    asm(
+                        "ld1r {%[a0].4s}, [%[pa0]]\n\t\t"
+                        "ld1r {%[a1].4s}, [%[pa1]]\n\t\t"
+                        "ld1r {%[a2].4s}, [%[pa2]]\n\t\t"
+                        "ld1r {%[a3].4s}, [%[pa3]]\n\t\t"
+			:[a0]"=w"(vA0) ,[a1]"=w" (vA1),[a2]"=w" (vA2),[a3]"=w"(vA3)
+			:[pa0]"r"(pointer0) ,[pa1]"r"(pointer1) ,[pa2]"r"(pointer2) ,[pa3]"r"(pointer3)
+		       );
+		}
+                for (int k = 0;k < N-1;k++)
+                {
+                    float* pointer0 = &A[(i0+0)*N+k+1];
+                    float* pointer1 = &A[(i0+1)*N+k+1];
+                    float* pointer2 = &A[(i0+2)*N+k+1];
+                    float* pointer3 = &A[(i0+3)*N+k+1];
+
+                    asm(
+                        "ld1r {%[a0].4s}, [%[pa0]]\n\t\t"
+                        "ld1r {%[a1].4s}, [%[pa1]]\n\t\t"
+                        "ld1r {%[a2].4s}, [%[pa2]]\n\t\t"
+                        "ld1r {%[a3].4s}, [%[pa3]]\n\t\t"
+			:[a0]"=w"(vA0n) ,[a1]"=w" (vA1n),[a2]"=w" (vA2n),[a3]"=w"(vA3n)
+			:[pa0]"r"(pointer0) ,[pa1]"r"(pointer1) ,[pa2]"r"(pointer2) ,[pa3]"r"(pointer3)
+		       );
+                    float32x4_t vB0 = vld1q_f32(&B[(k+0)*N+j0+0 ]);
+                    float32x4_t vB1 = vld1q_f32(&B[(k+0)*N+j0+4 ]);
+                    float32x4_t vB2 = vld1q_f32(&B[(k+0)*N+j0+8 ]);
+                    float32x4_t vB3 = vld1q_f32(&B[(k+0)*N+j0+12]);
+
+                    asm(
+                        "fmla %[c00].4s, %[b0].4s, %[a0].4s\n\t\t"
+                        "fmla %[c01].4s, %[b0].4s, %[a1].4s\n\t\t"
+                        "fmla %[c02].4s, %[b0].4s, %[a2].4s\n\t\t"
+                        "fmla %[c03].4s, %[b0].4s, %[a3].4s\n\t\t"
+                        "fmla %[c10].4s, %[b1].4s, %[a0].4s\n\t\t"
+                        "fmla %[c11].4s, %[b1].4s, %[a1].4s\n\t\t"
+                        "fmla %[c12].4s, %[b1].4s, %[a2].4s\n\t\t"
+                        "fmla %[c13].4s, %[b1].4s, %[a3].4s\n\t\t"
+                        :[c00]"+w"(vC00),[c01]"+w"(vC01),[c02]"+w"(vC02),[c03]"+w"(vC03) 
+		   	,[c10]"+w"(vC10),[c11]"+w"(vC11),[c12]"+w"(vC12),[c13]"+w"(vC13) 
+                        :[b0]"w"(vB0),[b1]"w"(vB1)
+			,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
+		       );
+		    asm(
+                        "fmla %[c20].4s, %[b2].4s, %[a0].4s\n\t\t"
+                        "fmla %[c21].4s, %[b2].4s, %[a1].4s\n\t\t"
+                        "fmla %[c22].4s, %[b2].4s, %[a2].4s\n\t\t"
+                        "fmla %[c23].4s, %[b2].4s, %[a3].4s\n\t\t"
+                        "fmla %[c30].4s, %[b3].4s, %[a0].4s\n\t\t"
+                        "fmla %[c31].4s, %[b3].4s, %[a1].4s\n\t\t"
+                        "fmla %[c32].4s, %[b3].4s, %[a2].4s\n\t\t"
+                        "fmla %[c33].4s, %[b3].4s, %[a3].4s\n\t\t"
+                        :[c20]"+w"(vC20),[c21]"+w"(vC21),[c22]"+w"(vC22),[c23]"+w"(vC23)
+			,[c30]"+w"(vC30),[c31]"+w"(vC31),[c32]"+w"(vC32),[c33]"+w"(vC33)
+                        :[b2]"w"(vB2),[b3]"w"(vB3)
+			,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
+                    );
+		    vA0 = vA0n;
+		    vA1 = vA1n;
+		    vA2 = vA2n;
+		    vA3 = vA3n;
+                }
+                vst1q_f32(C+(i0+0)*N+j0+0,  vC00);
+                vst1q_f32(C+(i0+0)*N+j0+4,  vC01);
+                vst1q_f32(C+(i0+0)*N+j0+8,  vC02);
+                vst1q_f32(C+(i0+0)*N+j0+12, vC03);
+                vst1q_f32(C+(i0+1)*N+j0+0,  vC10);
+                vst1q_f32(C+(i0+1)*N+j0+4,  vC11);
+                vst1q_f32(C+(i0+1)*N+j0+8,  vC12);
+                vst1q_f32(C+(i0+1)*N+j0+12, vC13);
+                vst1q_f32(C+(i0+2)*N+j0+0,  vC20);
+                vst1q_f32(C+(i0+2)*N+j0+4,  vC21);
+                vst1q_f32(C+(i0+2)*N+j0+8,  vC22);
+                vst1q_f32(C+(i0+2)*N+j0+12, vC23);
+                vst1q_f32(C+(i0+3)*N+j0+0,  vC30);
+                vst1q_f32(C+(i0+3)*N+j0+4,  vC31);
+                vst1q_f32(C+(i0+3)*N+j0+8,  vC32);
+                vst1q_f32(C+(i0+3)*N+j0+12, vC33);
+            }
+            break;
         case 10:
             {
                 std::cout << "10" << std::endl;
