@@ -787,7 +787,7 @@ int main(int argc, char** argv)
         case 19:
             std::cout << "19" << std::endl;
             for (int i0 = 0;i0 < N;i0 += 4)
-            for (int j0 = 0;j0 < N;j0 += 20)
+            for (int j0 = 0;j0 < N;j0 += 40)
             {
                 float16x8_t vC00 = vdupq_n_f16(0);
                 float16x8_t vC01 = vdupq_n_f16(0);
@@ -829,10 +829,10 @@ int main(int argc, char** argv)
 			:[pa0]"r"(pointer0) ,[pa1]"r"(pointer1) ,[pa2]"r"(pointer2) ,[pa3]"r"(pointer3)
 		       );
                     vB0 = vld1q_f16((float16_t*)&B[j0+0 ]);
-                    vB1 = vld1q_f16((float16_t*)&B[j0+4 ]);
-                    vB2 = vld1q_f16((float16_t*)&B[j0+8 ]);
-                    vB3 = vld1q_f16((float16_t*)&B[j0+12]);
-                    vB4 = vld1q_f16((float16_t*)&B[j0+16]);
+                    vB1 = vld1q_f16((float16_t*)&B[j0+8 ]);
+                    vB2 = vld1q_f16((float16_t*)&B[j0+16]);
+                    vB3 = vld1q_f16((float16_t*)&B[j0+24]);
+                    vB4 = vld1q_f16((float16_t*)&B[j0+32]);
 		}
                 for (int k = 0;k < N-1;k++)
                 {
@@ -850,10 +850,10 @@ int main(int argc, char** argv)
 			:[pa0]"r"(pointer0) ,[pa1]"r"(pointer1) ,[pa2]"r"(pointer2) ,[pa3]"r"(pointer3)
 		       );
                     vB0n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+0 ]);
-                    vB1n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+4 ]);
-                    vB2n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+8 ]);
-                    vB3n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+12]);
-                    vB4n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+16]);
+                    vB1n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+8 ]);
+                    vB2n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+16]);
+                    vB3n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+24]);
+                    vB4n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+32]);
 
                     asm(
                         "fmla %[c00].8h, %[b0].8h, %[a0].8h\n\t\t"
@@ -927,26 +927,26 @@ int main(int argc, char** argv)
 			,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
                     );
 		}
-                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+0),  vC00);
-                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+4),  vC01);
-                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+8),  vC02);
-                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+12), vC03);
-                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+16), vC04);
-                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+0),  vC10);
-                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+4),  vC11);
-                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+8),  vC12);
-                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+12), vC13);
-                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+16), vC14);
-                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+0),  vC20);
-                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+4),  vC21);
-                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+8),  vC22);
-                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+12), vC23);
-                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+16), vC24);
-                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+0),  vC30);
-                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+4),  vC31);
-                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+8),  vC32);
-                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+12), vC33);
-                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+16), vC34);
+                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+0 ),  vC00);
+                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+8 ),  vC01);
+                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+16),  vC02);
+                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+24), vC03);
+                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+32), vC04);
+                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+0 ),  vC10);
+                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+8 ),  vC11);
+                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+16),  vC12);
+                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+24), vC13);
+                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+32), vC14);
+                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+0 ),  vC20);
+                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+8 ),  vC21);
+                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+16),  vC22);
+                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+24), vC23);
+                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+32), vC24);
+                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+0 ),  vC30);
+                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+8 ),  vC31);
+                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+16),  vC32);
+                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+24), vC33);
+                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+32), vC34);
             }
             break;
 #endif
