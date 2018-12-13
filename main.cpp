@@ -320,6 +320,7 @@ int main(int argc, char** argv)
                 float32x4_t vC33 = vdupq_n_f32(0);
                 for (int k = 0;k < N;k++)
                 {
+			float* pointer = &A[(i0+0)*N+k];
                     float32x2_t vA0 = vld1_f32(&A[(i0+0)*N+k]);
                     float32x2_t vA1 = vld1_f32(&A[(i0+1)*N+k]);
                     float32x2_t vA2 = vld1_f32(&A[(i0+2)*N+k]);
@@ -330,6 +331,7 @@ int main(int argc, char** argv)
                     float32x4_t vB3 = vld1q_f32(&B[(k+0)*N+j0+12]);
 
                     asm(
+                        "ld1r {%[a0].4s}, [%[pa]]\n\t\t"
                         "fmla %[c00].4s, %[b0].4s, %[a0].s[0]\n\t\t"
                         /*"fmla %[c01].4s, %[b0].4s, %[a1].s[0]\n\t\t"*/
                         /*"fmla %[c02].4s, %[b0].4s, %[a2].s[0]\n\t\t"*/
@@ -344,8 +346,8 @@ int main(int argc, char** argv)
                         /*"fmla %[c23].4s, %[b2].4s, %[a3].s[0]\n\t\t"*/
                         /*:[c00]"+r"(vC00),[c01]"+r"(vC01),[c02]"+r"(vC02),[c03]"+r"(vC03) ,[c10]"+r"(vC10),[c11]"+r"(vC11),[c12]"+r"(vC12),[c13]"+r"(vC13) ,[c20]"+r"(vC20),[c21]"+r"(vC21),[c22]"+r"(vC22),[c23]"+r"(vC23)*/
                         /*:[b0]"r"(vB0),[b1]"r"(vB1),[b2]"r"(vB2) ,[a0]"r"(vA0),[a1]"r"(vA1),[a2]"r"(vA2),[a3]"r"(vA3)a*/
-			:[c00]"+w"(vC00)
-			:[b0]"w"(vB0), [a0]"w"(vA0)
+			:[c00]"+w"(vC00), [a0]"+w"(vA0)
+			:[b0]"w"(vB0),[pa]"r"(pointer)
                     );
 
                         /*"fmla %[c30].4s, %[b3].4s, %[a0].s[0]\n\t\t"*/
