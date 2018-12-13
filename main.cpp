@@ -91,7 +91,7 @@ int main(int argc, char** argv)
             }
             break;
         case 2:
-	    std::cout << "22222" << std::endl;
+            std::cout << "22222" << std::endl;
             for (int i0 = 0;i0 < N;i0 += 4)
             for (int j0 = 0;j0 < N;j0 += 4)
             {
@@ -119,7 +119,7 @@ int main(int argc, char** argv)
             }
             break;
         case 3:
-	    std::cout << "33333" << std::endl;
+            std::cout << "33333" << std::endl;
             for (int i0 = 0;i0 < N;i0 += 4)
             for (int j0 = 0;j0 < N;j0 += 4)
             {
@@ -148,7 +148,7 @@ int main(int argc, char** argv)
             }
             break;
         case 4:
-	    std::cout << "44444" << std::endl;
+            std::cout << "44444" << std::endl;
             for (int i0 = 0;i0 < N;i0 += 8)
             for (int j0 = 0;j0 < N;j0 += 4)
             {
@@ -189,7 +189,7 @@ int main(int argc, char** argv)
             }
             break;
         case 5:
-	    std::cout << "55555" << std::endl;
+            std::cout << "55555" << std::endl;
             for (int i0 = 0;i0 < N;i0 += 4)
             for (int j0 = 0;j0 < N;j0 += 8)
             {
@@ -230,7 +230,7 @@ int main(int argc, char** argv)
             }
             break;
         case 6:
-	    std::cout << "66666" << std::endl;
+            std::cout << "66666" << std::endl;
             for (int i0 = 0;i0 < N;i0 += 4)
             for (int j0 = 0;j0 < N;j0 += 16)
             {
@@ -277,6 +277,83 @@ int main(int argc, char** argv)
                     vC31 = vmlaq_lane_f32(vC31, vB3, vA1, 0);
                     vC32 = vmlaq_lane_f32(vC32, vB3, vA2, 0);
                     vC33 = vmlaq_lane_f32(vC33, vB3, vA3, 0);
+                }
+                vst1q_f32(C+(i0+0)*N+j0+0,  vC00);
+                vst1q_f32(C+(i0+0)*N+j0+4,  vC01);
+                vst1q_f32(C+(i0+0)*N+j0+8,  vC02);
+                vst1q_f32(C+(i0+0)*N+j0+12, vC03);
+                vst1q_f32(C+(i0+1)*N+j0+0,  vC10);
+                vst1q_f32(C+(i0+1)*N+j0+4,  vC11);
+                vst1q_f32(C+(i0+1)*N+j0+8,  vC12);
+                vst1q_f32(C+(i0+1)*N+j0+12, vC13);
+                vst1q_f32(C+(i0+2)*N+j0+0,  vC20);
+                vst1q_f32(C+(i0+2)*N+j0+4,  vC21);
+                vst1q_f32(C+(i0+2)*N+j0+8,  vC22);
+                vst1q_f32(C+(i0+2)*N+j0+12, vC23);
+                vst1q_f32(C+(i0+3)*N+j0+0,  vC30);
+                vst1q_f32(C+(i0+3)*N+j0+4,  vC31);
+                vst1q_f32(C+(i0+3)*N+j0+8,  vC32);
+                vst1q_f32(C+(i0+3)*N+j0+12, vC33);
+            }
+            break;
+        case 7:
+            std::cout << "7777" << std::endl;
+            for (int i0 = 0;i0 < N;i0 += 4)
+            for (int j0 = 0;j0 < N;j0 += 16)
+            {
+		volatile float32x4_t aaaa = vld1q_dup_f32(A);
+                float32x4_t vC00 = vdupq_n_f32(0);
+                float32x4_t vC01 = vdupq_n_f32(0);
+                float32x4_t vC02 = vdupq_n_f32(0);
+                float32x4_t vC03 = vdupq_n_f32(0);
+                float32x4_t vC10 = vdupq_n_f32(0);
+                float32x4_t vC11 = vdupq_n_f32(0);
+                float32x4_t vC12 = vdupq_n_f32(0);
+                float32x4_t vC13 = vdupq_n_f32(0);
+                float32x4_t vC20 = vdupq_n_f32(0);
+                float32x4_t vC21 = vdupq_n_f32(0);
+                float32x4_t vC22 = vdupq_n_f32(0);
+                float32x4_t vC23 = vdupq_n_f32(0);
+                float32x4_t vC30 = vdupq_n_f32(0);
+                float32x4_t vC31 = vdupq_n_f32(0);
+                float32x4_t vC32 = vdupq_n_f32(0);
+                float32x4_t vC33 = vdupq_n_f32(0);
+                for (int k = 0;k < N;k++)
+                {
+                    float32x2_t vA0 = vld1_f32(&A[(i0+0)*N+k]);
+                    float32x2_t vA1 = vld1_f32(&A[(i0+1)*N+k]);
+                    float32x2_t vA2 = vld1_f32(&A[(i0+2)*N+k]);
+                    float32x2_t vA3 = vld1_f32(&A[(i0+3)*N+k]);
+                    float32x4_t vB0 = vld1q_f32(&B[(k+0)*N+j0+0 ]);
+                    float32x4_t vB1 = vld1q_f32(&B[(k+0)*N+j0+4 ]);
+                    float32x4_t vB2 = vld1q_f32(&B[(k+0)*N+j0+8 ]);
+                    float32x4_t vB3 = vld1q_f32(&B[(k+0)*N+j0+12]);
+
+                    asm(
+                        "fmla %[c00].4s, %[b0].4s, %[a0].s[0]\n\t\t"
+                        /*"fmla %[c01].4s, %[b0].4s, %[a1].s[0]\n\t\t"*/
+                        /*"fmla %[c02].4s, %[b0].4s, %[a2].s[0]\n\t\t"*/
+                        /*"fmla %[c03].4s, %[b0].4s, %[a3].s[0]\n\t\t"*/
+                        /*"fmla %[c10].4s, %[b1].4s, %[a0].s[0]\n\t\t"*/
+                        /*"fmla %[c11].4s, %[b1].4s, %[a1].s[0]\n\t\t"*/
+                        /*"fmla %[c12].4s, %[b1].4s, %[a2].s[0]\n\t\t"*/
+                        /*"fmla %[c13].4s, %[b1].4s, %[a3].s[0]\n\t\t"*/
+                        /*"fmla %[c20].4s, %[b2].4s, %[a0].s[0]\n\t\t"*/
+                        /*"fmla %[c21].4s, %[b2].4s, %[a1].s[0]\n\t\t"*/
+                        /*"fmla %[c22].4s, %[b2].4s, %[a2].s[0]\n\t\t"*/
+                        /*"fmla %[c23].4s, %[b2].4s, %[a3].s[0]\n\t\t"*/
+                        /*:[c00]"+r"(vC00),[c01]"+r"(vC01),[c02]"+r"(vC02),[c03]"+r"(vC03) ,[c10]"+r"(vC10),[c11]"+r"(vC11),[c12]"+r"(vC12),[c13]"+r"(vC13) ,[c20]"+r"(vC20),[c21]"+r"(vC21),[c22]"+r"(vC22),[c23]"+r"(vC23)*/
+                        /*:[b0]"r"(vB0),[b1]"r"(vB1),[b2]"r"(vB2) ,[a0]"r"(vA0),[a1]"r"(vA1),[a2]"r"(vA2),[a3]"r"(vA3)a*/
+			:[c00]"+w"(vC00)
+			:[b0]"w"(vB0), [a0]"w"(vA0)
+                    );
+
+                        /*"fmla %[c30].4s, %[b3].4s, %[a0].s[0]\n\t\t"*/
+                        /*"fmla %[c31].4s, %[b3].4s, %[a1].s[0]\n\t\t"*/
+                        /*"fmla %[c32].4s, %[b3].4s, %[a2].s[0]\n\t\t"*/
+                        /*"fmla %[c33].4s, %[b3].4s, %[a3].s[0]\n\t\t"*/
+                        /*,[c30]"+r"(vC30),[c31]"+r"(vC31),[c32]"+r"(vC32),[c33]"+r"(vC33)*/
+                        /*,[b3]"r"(vB3)*/
                 }
                 vst1q_f32(C+(i0+0)*N+j0+0,  vC00);
                 vst1q_f32(C+(i0+0)*N+j0+4,  vC01);
@@ -404,13 +481,13 @@ int main(int argc, char** argv)
 #if HAVE_ASIMDHP
     {
         float16_t value[] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, 100.0f, };
-	float16_t resultWrite[8];
-	float16x8_t a = vld1q_f16(value + 0);
-	float16x8_t b = vld1q_f16(value + 8);
-	float16x8_t c = vld1q_f16(value + 16);
-	float16x8_t result = vfmaq_f16(a, b, c);
-	vst1q_f16(resultWrite, result);
-	std::cout << resultWrite << std::endl;
+        float16_t resultWrite[8];
+        float16x8_t a = vld1q_f16(value + 0);
+        float16x8_t b = vld1q_f16(value + 8);
+        float16x8_t c = vld1q_f16(value + 16);
+        float16x8_t result = vfmaq_f16(a, b, c);
+        vst1q_f16(resultWrite, result);
+        std::cout << resultWrite << std::endl;
     }
 #endif
     return 0;
