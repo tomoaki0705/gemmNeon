@@ -388,7 +388,6 @@ int main(int argc, char** argv)
             }
             break;
         case 8:
-            std::cout << "8888" << std::endl;
             for (int i0 = 0;i0 < N;i0 += 4)
             for (int j0 = 0;j0 < N;j0 += 16)
             {
@@ -784,41 +783,39 @@ int main(int argc, char** argv)
                 }
             }
             break;
-        case 19:
-            std::cout << "19" << std::endl;
+        case 18:
+            float16_t *Ah = (float16_t*)A;
+            float16_t *Bh = (float16_t*)B;
+            float16_t *Ch = (float16_t*)C;
             for (int i0 = 0;i0 < N;i0 += 4)
-            for (int j0 = 0;j0 < N;j0 += 40)
+            for (int j0 = 0;j0 < N;j0 += 32)
             {
                 float16x8_t vC00 = vdupq_n_f16(0);
                 float16x8_t vC01 = vdupq_n_f16(0);
                 float16x8_t vC02 = vdupq_n_f16(0);
                 float16x8_t vC03 = vdupq_n_f16(0);
-                float16x8_t vC04 = vdupq_n_f16(0);
                 float16x8_t vC10 = vdupq_n_f16(0);
                 float16x8_t vC11 = vdupq_n_f16(0);
                 float16x8_t vC12 = vdupq_n_f16(0);
                 float16x8_t vC13 = vdupq_n_f16(0);
-                float16x8_t vC14 = vdupq_n_f16(0);
                 float16x8_t vC20 = vdupq_n_f16(0);
                 float16x8_t vC21 = vdupq_n_f16(0);
                 float16x8_t vC22 = vdupq_n_f16(0);
                 float16x8_t vC23 = vdupq_n_f16(0);
-                float16x8_t vC24 = vdupq_n_f16(0);
                 float16x8_t vC30 = vdupq_n_f16(0);
                 float16x8_t vC31 = vdupq_n_f16(0);
                 float16x8_t vC32 = vdupq_n_f16(0);
                 float16x8_t vC33 = vdupq_n_f16(0);
-                float16x8_t vC34 = vdupq_n_f16(0);
 	        float16x8_t vA0, vA1, vA2, vA3;
-	        float16x8_t vB0, vB1, vB2, vB3, vB4;
+	        float16x8_t vB0, vB1, vB2, vB3;
 		float16x8_t vA0n, vA1n, vA2n, vA3n;
-                float16x8_t vB0n, vB1n, vB2n, vB3n, vB4n;
+                float16x8_t vB0n, vB1n, vB2n, vB3n;
 		// pre-load
 		{
-                    float16_t* pointer0 = (float16_t*)&A[(i0+0)*N];
-                    float16_t* pointer1 = (float16_t*)&A[(i0+1)*N];
-                    float16_t* pointer2 = (float16_t*)&A[(i0+2)*N];
-                    float16_t* pointer3 = (float16_t*)&A[(i0+3)*N];
+                    float16_t* pointer0 = &Ah[(i0+0)*N];
+                    float16_t* pointer1 = &Ah[(i0+1)*N];
+                    float16_t* pointer2 = &Ah[(i0+2)*N];
+                    float16_t* pointer3 = &Ah[(i0+3)*N];
 
                     asm(
                         "ld1r {%[a0].8h}, [%[pa0]]\n\t\t"
@@ -828,18 +825,17 @@ int main(int argc, char** argv)
 			:[a0]"=w"(vA0) ,[a1]"=w" (vA1),[a2]"=w" (vA2),[a3]"=w"(vA3)
 			:[pa0]"r"(pointer0) ,[pa1]"r"(pointer1) ,[pa2]"r"(pointer2) ,[pa3]"r"(pointer3)
 		       );
-                    vB0 = vld1q_f16((float16_t*)&B[j0+0 ]);
-                    vB1 = vld1q_f16((float16_t*)&B[j0+8 ]);
-                    vB2 = vld1q_f16((float16_t*)&B[j0+16]);
-                    vB3 = vld1q_f16((float16_t*)&B[j0+24]);
-                    vB4 = vld1q_f16((float16_t*)&B[j0+32]);
+                    vB0 = vld1q_f16(&Bh[j0+0 ]);
+                    vB1 = vld1q_f16(&Bh[j0+4 ]);
+                    vB2 = vld1q_f16(&Bh[j0+8 ]);
+                    vB3 = vld1q_f16(&Bh[j0+12]);
 		}
                 for (int k = 0;k < N-1;k++)
                 {
-                    float16_t* pointer0 = (float16_t*)&A[(i0+0)*N];
-                    float16_t* pointer1 = (float16_t*)&A[(i0+1)*N];
-                    float16_t* pointer2 = (float16_t*)&A[(i0+2)*N];
-                    float16_t* pointer3 = (float16_t*)&A[(i0+3)*N];
+                    float16_t* pointer0 = &Ah[(i0+0)*N+k+1];
+                    float16_t* pointer1 = &Ah[(i0+1)*N+k+1];
+                    float16_t* pointer2 = &Ah[(i0+2)*N+k+1];
+                    float16_t* pointer3 = &Ah[(i0+3)*N+k+1];
 
                     asm(
                         "ld1r {%[a0].8h}, [%[pa0]]\n\t\t"
@@ -849,11 +845,10 @@ int main(int argc, char** argv)
 			:[a0]"=w"(vA0n) ,[a1]"=w" (vA1n),[a2]"=w" (vA2n),[a3]"=w"(vA3n)
 			:[pa0]"r"(pointer0) ,[pa1]"r"(pointer1) ,[pa2]"r"(pointer2) ,[pa3]"r"(pointer3)
 		       );
-                    vB0n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+0 ]);
-                    vB1n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+8 ]);
-                    vB2n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+16]);
-                    vB3n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+24]);
-                    vB4n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+32]);
+                    vB0n = vld1q_f16(&Bh[(k+1)*N+j0+0 ]);
+                    vB1n = vld1q_f16(&Bh[(k+1)*N+j0+8 ]);
+                    vB2n = vld1q_f16(&Bh[(k+1)*N+j0+16]);
+                    vB3n = vld1q_f16(&Bh[(k+1)*N+j0+24]);
 
                     asm(
                         "fmla %[c00].8h, %[b0].8h, %[a0].8h\n\t\t"
@@ -883,18 +878,10 @@ int main(int argc, char** argv)
                         :[b2]"w"(vB2),[b3]"w"(vB3)
 			,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
                     );
-		    asm(
-                        "fmla %[c04].8h, %[b4].8h, %[a0].8h\n\t\t"
-                        "fmla %[c14].8h, %[b4].8h, %[a1].8h\n\t\t"
-                        "fmla %[c24].8h, %[b4].8h, %[a2].8h\n\t\t"
-                        "fmla %[c34].8h, %[b4].8h, %[a3].8h\n\t\t"
-			:[c04]"+w"(vC04) ,[c14]"+w"(vC14) ,[c24]"+w"(vC24) ,[c34]"+w"(vC34)
-			:[b4]"w"(vB4) ,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
-		       );
 		    vA0 = vA0n;vB0 = vB0n;
 		    vA1 = vA1n;vB1 = vB1n;
 		    vA2 = vA2n;vB2 = vB2n;
-		    vA3 = vA3n;vB3 = vB3n;vB4 = vB4n;
+		    vA3 = vA3n;vB3 = vB3n;
                 }
 		{
 		    // last loop
@@ -927,28 +914,188 @@ int main(int argc, char** argv)
 			,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
                     );
 		}
-                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+0 ),  vC00);
-                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+8 ),  vC01);
-                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+16),  vC02);
-                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+24), vC03);
-                vst1q_f16((float16_t*)(C+(i0+0)*N+j0+32), vC04);
-                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+0 ),  vC10);
-                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+8 ),  vC11);
-                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+16),  vC12);
-                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+24), vC13);
-                vst1q_f16((float16_t*)(C+(i0+1)*N+j0+32), vC14);
-                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+0 ),  vC20);
-                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+8 ),  vC21);
-                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+16),  vC22);
-                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+24), vC23);
-                vst1q_f16((float16_t*)(C+(i0+2)*N+j0+32), vC24);
-                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+0 ),  vC30);
-                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+8 ),  vC31);
-                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+16),  vC32);
-                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+24), vC33);
-                vst1q_f16((float16_t*)(C+(i0+3)*N+j0+32), vC34);
+                vst1q_f16(Ch+(i0+0)*N+j0+0,  vC00);
+                vst1q_f16(Ch+(i0+0)*N+j0+8,  vC01);
+                vst1q_f16(Ch+(i0+0)*N+j0+16, vC02);
+                vst1q_f16(Ch+(i0+0)*N+j0+24, vC03);
+                vst1q_f16(Ch+(i0+1)*N+j0+0,  vC10);
+                vst1q_f16(Ch+(i0+1)*N+j0+8,  vC11);
+                vst1q_f16(Ch+(i0+1)*N+j0+16, vC12);
+                vst1q_f16(Ch+(i0+1)*N+j0+24, vC13);
+                vst1q_f16(Ch+(i0+2)*N+j0+0,  vC20);
+                vst1q_f16(Ch+(i0+2)*N+j0+8,  vC21);
+                vst1q_f16(Ch+(i0+2)*N+j0+16, vC22);
+                vst1q_f16(Ch+(i0+2)*N+j0+24, vC23);
+                vst1q_f16(Ch+(i0+3)*N+j0+0,  vC30);
+                vst1q_f16(Ch+(i0+3)*N+j0+8,  vC31);
+                vst1q_f16(Ch+(i0+3)*N+j0+16, vC32);
+                vst1q_f16(Ch+(i0+3)*N+j0+24, vC33);
             }
             break;
+        //case 19:
+        //    for (int i0 = 0;i0 < N;i0 += 4)
+        //    for (int j0 = 0;j0 < N;j0 += 40)
+        //    {
+        //        float16x8_t vC00 = vdupq_n_f16(0);
+        //        float16x8_t vC01 = vdupq_n_f16(0);
+        //        float16x8_t vC02 = vdupq_n_f16(0);
+        //        float16x8_t vC03 = vdupq_n_f16(0);
+        //        float16x8_t vC04 = vdupq_n_f16(0);
+        //        float16x8_t vC10 = vdupq_n_f16(0);
+        //        float16x8_t vC11 = vdupq_n_f16(0);
+        //        float16x8_t vC12 = vdupq_n_f16(0);
+        //        float16x8_t vC13 = vdupq_n_f16(0);
+        //        float16x8_t vC14 = vdupq_n_f16(0);
+        //        float16x8_t vC20 = vdupq_n_f16(0);
+        //        float16x8_t vC21 = vdupq_n_f16(0);
+        //        float16x8_t vC22 = vdupq_n_f16(0);
+        //        float16x8_t vC23 = vdupq_n_f16(0);
+        //        float16x8_t vC24 = vdupq_n_f16(0);
+        //        float16x8_t vC30 = vdupq_n_f16(0);
+        //        float16x8_t vC31 = vdupq_n_f16(0);
+        //        float16x8_t vC32 = vdupq_n_f16(0);
+        //        float16x8_t vC33 = vdupq_n_f16(0);
+        //        float16x8_t vC34 = vdupq_n_f16(0);
+	//        float16x8_t vA0, vA1, vA2, vA3;
+	//        float16x8_t vB0, vB1, vB2, vB3, vB4;
+	//	float16x8_t vA0n, vA1n, vA2n, vA3n;
+        //        float16x8_t vB0n, vB1n, vB2n, vB3n, vB4n;
+	//	// pre-load
+	//	{
+        //            float16_t* pointer0 = (float16_t*)&A[(i0+0)*N];
+        //            float16_t* pointer1 = (float16_t*)&A[(i0+1)*N];
+        //            float16_t* pointer2 = (float16_t*)&A[(i0+2)*N];
+        //            float16_t* pointer3 = (float16_t*)&A[(i0+3)*N];
+
+        //            asm(
+        //                "ld1r {%[a0].8h}, [%[pa0]]\n\t\t"
+        //                "ld1r {%[a1].8h}, [%[pa1]]\n\t\t"
+        //                "ld1r {%[a2].8h}, [%[pa2]]\n\t\t"
+        //                "ld1r {%[a3].8h}, [%[pa3]]\n\t\t"
+	//		:[a0]"=w"(vA0) ,[a1]"=w" (vA1),[a2]"=w" (vA2),[a3]"=w"(vA3)
+	//		:[pa0]"r"(pointer0) ,[pa1]"r"(pointer1) ,[pa2]"r"(pointer2) ,[pa3]"r"(pointer3)
+	//	       );
+        //            vB0 = vld1q_f16((float16_t*)&B[j0+0 ]);
+        //            vB1 = vld1q_f16((float16_t*)&B[j0+8 ]);
+        //            vB2 = vld1q_f16((float16_t*)&B[j0+16]);
+        //            vB3 = vld1q_f16((float16_t*)&B[j0+24]);
+        //            vB4 = vld1q_f16((float16_t*)&B[j0+32]);
+	//	}
+        //        for (int k = 0;k < N-1;k++)
+        //        {
+        //            float16_t* pointer0 = (float16_t*)&A[(i0+0)*N];
+        //            float16_t* pointer1 = (float16_t*)&A[(i0+1)*N];
+        //            float16_t* pointer2 = (float16_t*)&A[(i0+2)*N];
+        //            float16_t* pointer3 = (float16_t*)&A[(i0+3)*N];
+
+        //            asm(
+        //                "ld1r {%[a0].8h}, [%[pa0]]\n\t\t"
+        //                "ld1r {%[a1].8h}, [%[pa1]]\n\t\t"
+        //                "ld1r {%[a2].8h}, [%[pa2]]\n\t\t"
+        //                "ld1r {%[a3].8h}, [%[pa3]]\n\t\t"
+	//		:[a0]"=w"(vA0n) ,[a1]"=w" (vA1n),[a2]"=w" (vA2n),[a3]"=w"(vA3n)
+	//		:[pa0]"r"(pointer0) ,[pa1]"r"(pointer1) ,[pa2]"r"(pointer2) ,[pa3]"r"(pointer3)
+	//	       );
+        //            vB0n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+0 ]);
+        //            vB1n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+8 ]);
+        //            vB2n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+16]);
+        //            vB3n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+24]);
+        //            vB4n = vld1q_f16((float16_t*)&B[(k+1)*N+j0+32]);
+
+        //            asm(
+        //                "fmla %[c00].8h, %[b0].8h, %[a0].8h\n\t\t"
+        //                "fmla %[c01].8h, %[b0].8h, %[a1].8h\n\t\t"
+        //                "fmla %[c02].8h, %[b0].8h, %[a2].8h\n\t\t"
+        //                "fmla %[c03].8h, %[b0].8h, %[a3].8h\n\t\t"
+        //                "fmla %[c10].8h, %[b1].8h, %[a0].8h\n\t\t"
+        //                "fmla %[c11].8h, %[b1].8h, %[a1].8h\n\t\t"
+        //                "fmla %[c12].8h, %[b1].8h, %[a2].8h\n\t\t"
+        //                "fmla %[c13].8h, %[b1].8h, %[a3].8h\n\t\t"
+        //                :[c00]"+w"(vC00),[c01]"+w"(vC01),[c02]"+w"(vC02),[c03]"+w"(vC03) 
+	//	   	,[c10]"+w"(vC10),[c11]"+w"(vC11),[c12]"+w"(vC12),[c13]"+w"(vC13) 
+        //                :[b0]"w"(vB0),[b1]"w"(vB1)
+	//		,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
+	//	       );
+	//	    asm(
+        //                "fmla %[c20].8h, %[b2].8h, %[a0].8h\n\t\t"
+        //                "fmla %[c21].8h, %[b2].8h, %[a1].8h\n\t\t"
+        //                "fmla %[c22].8h, %[b2].8h, %[a2].8h\n\t\t"
+        //                "fmla %[c23].8h, %[b2].8h, %[a3].8h\n\t\t"
+        //                "fmla %[c30].8h, %[b3].8h, %[a0].8h\n\t\t"
+        //                "fmla %[c31].8h, %[b3].8h, %[a1].8h\n\t\t"
+        //                "fmla %[c32].8h, %[b3].8h, %[a2].8h\n\t\t"
+        //                "fmla %[c33].8h, %[b3].8h, %[a3].8h\n\t\t"
+        //                :[c20]"+w"(vC20),[c21]"+w"(vC21),[c22]"+w"(vC22),[c23]"+w"(vC23)
+	//		,[c30]"+w"(vC30),[c31]"+w"(vC31),[c32]"+w"(vC32),[c33]"+w"(vC33)
+        //                :[b2]"w"(vB2),[b3]"w"(vB3)
+	//		,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
+        //            );
+	//	    asm(
+        //                "fmla %[c04].8h, %[b4].8h, %[a0].8h\n\t\t"
+        //                "fmla %[c14].8h, %[b4].8h, %[a1].8h\n\t\t"
+        //                "fmla %[c24].8h, %[b4].8h, %[a2].8h\n\t\t"
+        //                "fmla %[c34].8h, %[b4].8h, %[a3].8h\n\t\t"
+	//		:[c04]"+w"(vC04) ,[c14]"+w"(vC14) ,[c24]"+w"(vC24) ,[c34]"+w"(vC34)
+	//		:[b4]"w"(vB4) ,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
+	//	       );
+	//	    vA0 = vA0n;vB0 = vB0n;
+	//	    vA1 = vA1n;vB1 = vB1n;
+	//	    vA2 = vA2n;vB2 = vB2n;
+	//	    vA3 = vA3n;vB3 = vB3n;vB4 = vB4n;
+        //        }
+	//	{
+	//	    // last loop
+        //            asm(
+        //                "fmla %[c00].8h, %[b0].8h, %[a0].8h\n\t\t"
+        //                "fmla %[c01].8h, %[b0].8h, %[a1].8h\n\t\t"
+        //                "fmla %[c02].8h, %[b0].8h, %[a2].8h\n\t\t"
+        //                "fmla %[c03].8h, %[b0].8h, %[a3].8h\n\t\t"
+        //                "fmla %[c10].8h, %[b1].8h, %[a0].8h\n\t\t"
+        //                "fmla %[c11].8h, %[b1].8h, %[a1].8h\n\t\t"
+        //                "fmla %[c12].8h, %[b1].8h, %[a2].8h\n\t\t"
+        //                "fmla %[c13].8h, %[b1].8h, %[a3].8h\n\t\t"
+        //                :[c00]"+w"(vC00),[c01]"+w"(vC01),[c02]"+w"(vC02),[c03]"+w"(vC03) 
+	//	   	,[c10]"+w"(vC10),[c11]"+w"(vC11),[c12]"+w"(vC12),[c13]"+w"(vC13) 
+        //                :[b0]"w"(vB0),[b1]"w"(vB1)
+	//		,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
+	//	       );
+	//	    asm(
+        //                "fmla %[c20].8h, %[b2].8h, %[a0].8h\n\t\t"
+        //                "fmla %[c21].8h, %[b2].8h, %[a1].8h\n\t\t"
+        //                "fmla %[c22].8h, %[b2].8h, %[a2].8h\n\t\t"
+        //                "fmla %[c23].8h, %[b2].8h, %[a3].8h\n\t\t"
+        //                "fmla %[c30].8h, %[b3].8h, %[a0].8h\n\t\t"
+        //                "fmla %[c31].8h, %[b3].8h, %[a1].8h\n\t\t"
+        //                "fmla %[c32].8h, %[b3].8h, %[a2].8h\n\t\t"
+        //                "fmla %[c33].8h, %[b3].8h, %[a3].8h\n\t\t"
+        //                :[c20]"+w"(vC20),[c21]"+w"(vC21),[c22]"+w"(vC22),[c23]"+w"(vC23)
+	//		,[c30]"+w"(vC30),[c31]"+w"(vC31),[c32]"+w"(vC32),[c33]"+w"(vC33)
+        //                :[b2]"w"(vB2),[b3]"w"(vB3)
+	//		,[a0]"w"(vA0),[a1]"w"(vA1),[a2]"w"(vA2),[a3]"w"(vA3)
+        //            );
+	//	}
+        //        vst1q_f16((float16_t*)(C+(i0+0)*N+j0+0 ),  vC00);
+        //        vst1q_f16((float16_t*)(C+(i0+0)*N+j0+8 ),  vC01);
+        //        vst1q_f16((float16_t*)(C+(i0+0)*N+j0+16),  vC02);
+        //        vst1q_f16((float16_t*)(C+(i0+0)*N+j0+24), vC03);
+        //        vst1q_f16((float16_t*)(C+(i0+0)*N+j0+32), vC04);
+        //        vst1q_f16((float16_t*)(C+(i0+1)*N+j0+0 ),  vC10);
+        //        vst1q_f16((float16_t*)(C+(i0+1)*N+j0+8 ),  vC11);
+        //        vst1q_f16((float16_t*)(C+(i0+1)*N+j0+16),  vC12);
+        //        vst1q_f16((float16_t*)(C+(i0+1)*N+j0+24), vC13);
+        //        vst1q_f16((float16_t*)(C+(i0+1)*N+j0+32), vC14);
+        //        vst1q_f16((float16_t*)(C+(i0+2)*N+j0+0 ),  vC20);
+        //        vst1q_f16((float16_t*)(C+(i0+2)*N+j0+8 ),  vC21);
+        //        vst1q_f16((float16_t*)(C+(i0+2)*N+j0+16),  vC22);
+        //        vst1q_f16((float16_t*)(C+(i0+2)*N+j0+24), vC23);
+        //        vst1q_f16((float16_t*)(C+(i0+2)*N+j0+32), vC24);
+        //        vst1q_f16((float16_t*)(C+(i0+3)*N+j0+0 ),  vC30);
+        //        vst1q_f16((float16_t*)(C+(i0+3)*N+j0+8 ),  vC31);
+        //        vst1q_f16((float16_t*)(C+(i0+3)*N+j0+16),  vC32);
+        //        vst1q_f16((float16_t*)(C+(i0+3)*N+j0+24), vC33);
+        //        vst1q_f16((float16_t*)(C+(i0+3)*N+j0+32), vC34);
+        //    }
+        //    break;
 #endif
         }
         
