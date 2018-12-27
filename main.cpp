@@ -11,9 +11,11 @@ const int maxMethod = 19;
 const int maxMethod = 10;
 #endif
 
+void kernel18(float16_t* A, float16_t* B, float16_t* C, uint64_t N);
+
 int main(int argc, char** argv)
 {
-    int method = 0;
+    int method = 18;
     if (2 <= argc)
         method = std::min(std::max(atoi(argv[1]), 0), maxMethod);
     uint64_t N = 512;
@@ -26,10 +28,12 @@ int main(int argc, char** argv)
     float *B = new float[N*N];
     float *C = new float[N*N];
     std::vector<double> history;
-    for (auto n = 0;n < 10;n++)
+    for (auto m = 0;m < 10;m++)
     {
         std::memset(C, 0, sizeof(float)*N*N);
         auto start = std::chrono::system_clock::now();
+        for (auto n = 0;n < 10;n++)
+        {
         switch(method)
         {
         case 0:
@@ -712,76 +716,7 @@ int main(int argc, char** argv)
             break;
 #if HAVE_ASIMDHP
         case 16:
-            {
-                std::cout << "16" << std::endl;
-                float16_t *Ah = (float16_t*)A;
-                float16_t *Bh = (float16_t*)B;
-                float16_t *Ch = (float16_t*)C;
-                for (int i0 = 0;i0 < N;i0 += 8)
-                for (int j0 = 0;j0 < N;j0 += 8)
-                {
-                    float16x8_t vC0 = vdupq_n_f16(0);
-                    float16x8_t vC1 = vdupq_n_f16(0);
-                    float16x8_t vC2 = vdupq_n_f16(0);
-                    float16x8_t vC3 = vdupq_n_f16(0);
-                    float16x8_t vC4 = vdupq_n_f16(0);
-                    float16x8_t vC5 = vdupq_n_f16(0);
-                    float16x8_t vC6 = vdupq_n_f16(0);
-                    float16x8_t vC7 = vdupq_n_f16(0);
-                    float16x8_t vC8 = vdupq_n_f16(0);
-                    float16x8_t vC9 = vdupq_n_f16(0);
-                    float16x8_t vC10 = vdupq_n_f16(0);
-                    float16x8_t vC11 = vdupq_n_f16(0);
-                    float16x8_t vC12 = vdupq_n_f16(0);
-                    float16x8_t vC13 = vdupq_n_f16(0);
-                    float16x8_t vC14 = vdupq_n_f16(0);
-                    float16x8_t vC15 = vdupq_n_f16(0);
-                    for (int k = 0;k < N;k++)
-                    {
-                        float16x8_t vA0 = vdupq_n_f16(Ah[(i0+0)*N+k]);
-                        float16x8_t vA1 = vdupq_n_f16(Ah[(i0+1)*N+k]);
-                        float16x8_t vA2 = vdupq_n_f16(Ah[(i0+2)*N+k]);
-                        float16x8_t vA3 = vdupq_n_f16(Ah[(i0+3)*N+k]);
-                        float16x8_t vB0 = vld1q_f16(&Bh[(k+0)*N+j0]);
-                        float16x8_t vB1 = vld1q_f16(&Bh[(k+1)*N+j0]);
-                        float16x8_t vB2 = vld1q_f16(&Bh[(k+2)*N+j0]);
-                        float16x8_t vB3 = vld1q_f16(&Bh[(k+3)*N+j0]);
-
-                        vC0 = vfmaq_f16(vC0, vB0, vA0);
-                        vC1 = vfmaq_f16(vC1, vB0, vA1);
-                        vC2 = vfmaq_f16(vC2, vB0, vA2);
-                        vC3 = vfmaq_f16(vC3, vB0, vA3);
-                        vC4 = vfmaq_f16(vC4, vB1, vA0);
-                        vC5 = vfmaq_f16(vC5, vB1, vA1);
-                        vC6 = vfmaq_f16(vC6, vB1, vA2);
-                        vC7 = vfmaq_f16(vC7, vB1, vA3);
-                        vC8 = vfmaq_f16(vC8, vB2, vA0);
-                        vC9 = vfmaq_f16(vC9, vB2, vA1);
-                        vC10 = vfmaq_f16(vC10, vB2, vA2);
-                        vC11 = vfmaq_f16(vC11, vB2, vA3);
-                        vC12 = vfmaq_f16(vC12, vB3, vA0);
-                        vC13 = vfmaq_f16(vC13, vB3, vA1);
-                        vC14 = vfmaq_f16(vC14, vB3, vA2);
-                        vC15 = vfmaq_f16(vC15, vB3, vA3);
-                    }
-                    vst1q_f16(Ch+(i0+0)*N+j0+0, vC0);
-                    vst1q_f16(Ch+(i0+1)*N+j0+0, vC1);
-                    vst1q_f16(Ch+(i0+2)*N+j0+0, vC2);
-                    vst1q_f16(Ch+(i0+3)*N+j0+0, vC3);
-                    vst1q_f16(Ch+(i0+4)*N+j0+0, vC4);
-                    vst1q_f16(Ch+(i0+5)*N+j0+0, vC5);
-                    vst1q_f16(Ch+(i0+6)*N+j0+0, vC6);
-                    vst1q_f16(Ch+(i0+7)*N+j0+0, vC7);
-                    vst1q_f16(Ch+(i0+0)*N+j0+4, vC8);
-                    vst1q_f16(Ch+(i0+1)*N+j0+4, vC9);
-                    vst1q_f16(Ch+(i0+2)*N+j0+4, vC10);
-                    vst1q_f16(Ch+(i0+3)*N+j0+4, vC11);
-                    vst1q_f16(Ch+(i0+0)*N+j0+4, vC12);
-                    vst1q_f16(Ch+(i0+1)*N+j0+4, vC13);
-                    vst1q_f16(Ch+(i0+2)*N+j0+4, vC14);
-                    vst1q_f16(Ch+(i0+3)*N+j0+4, vC15);
-                }
-            }
+	    kernel18((float16_t*)A, (float16_t*)B, (float16_t*)C, N);
             break;
         case 18:
             float16_t *Ah = (float16_t*)A;
@@ -1098,21 +1033,23 @@ int main(int argc, char** argv)
         //    break;
 #endif
         }
+        }
         
         auto end = std::chrono::system_clock::now();
-        double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
+        double elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end-start).count();
         history.push_back(elapsed);
     }
     std::sort(history.begin(), history.end());
     double median = history[history.size()/2];
     double minimum = history[0];
     double maximum = history[history.size()-1];
-    double operations = N*N*N*2;
-    std::cout << "time min  :" << minimum << "[ms]" << std::endl;
-    std::cout << "time med  :" << median  << "[ms]" << std::endl;
-    std::cout << "time max  :" << maximum << "[ms]" << std::endl;
+    double operations = N*N*N*2*10;
+    std::cout << "time min  :" << minimum / 1000.0 << "[ms]" << std::endl;
+    std::cout << "time med  :" << median  / 1000.0 << "[ms]" << std::endl;
+    std::cout << "time max  :" << maximum / 1000.0 << "[ms]" << std::endl;
     std::cout << "operations:" << operations << "[FLOP]" << std::endl;
-    std::cout << "FLOPS     :" << (operations * 1e-6 / median) << "GFLOPS" << std::endl;
+    std::cout << "FLOPS     :" << (operations * 1e-3 / median) << "GFLOPS" << std::endl;
+    std::cout << N << '\t' << median / 1000.0 << '\t' << (operations * 1e-3 / median) << std::endl;
     delete [] A;
     delete [] B;
     delete [] C;
