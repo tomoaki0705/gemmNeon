@@ -11,8 +11,8 @@ void kernel18(float16_t* A, float16_t* B, float16_t* C, uint64_t N)
     float16_t *Ah = A;
     float16_t *Bh = B;
     float16_t *Ch = C;
-    for (int i0 = 0;i0 < N;i0 += 8)
-    for (int j0 = 0;j0 < N;j0 += 8)
+    for (int i0 = 0;i0 < N;i0 += 4)
+    for (int j0 = 0;j0 < N;j0 += 16)
     {
         float16x8_t vC0 = vdupq_n_f16(0);
         float16x8_t vC1 = vdupq_n_f16(0);
@@ -62,18 +62,18 @@ void kernel18(float16_t* A, float16_t* B, float16_t* C, uint64_t N)
         vst1q_f16(Ch+(i0+1)*N+j0+0, vC1);
         vst1q_f16(Ch+(i0+2)*N+j0+0, vC2);
         vst1q_f16(Ch+(i0+3)*N+j0+0, vC3);
-        vst1q_f16(Ch+(i0+4)*N+j0+0, vC4);
-        vst1q_f16(Ch+(i0+5)*N+j0+0, vC5);
-        vst1q_f16(Ch+(i0+6)*N+j0+0, vC6);
-        vst1q_f16(Ch+(i0+7)*N+j0+0, vC7);
-        vst1q_f16(Ch+(i0+0)*N+j0+4, vC8);
-        vst1q_f16(Ch+(i0+1)*N+j0+4, vC9);
-        vst1q_f16(Ch+(i0+2)*N+j0+4, vC10);
-        vst1q_f16(Ch+(i0+3)*N+j0+4, vC11);
-        vst1q_f16(Ch+(i0+4)*N+j0+4, vC12);
-        vst1q_f16(Ch+(i0+5)*N+j0+4, vC13);
-        vst1q_f16(Ch+(i0+6)*N+j0+4, vC14);
-        vst1q_f16(Ch+(i0+7)*N+j0+4, vC15);
+        vst1q_f16(Ch+(i0+0)*N+j0+4, vC4);
+        vst1q_f16(Ch+(i0+1)*N+j0+4, vC5);
+        vst1q_f16(Ch+(i0+2)*N+j0+4, vC6);
+        vst1q_f16(Ch+(i0+3)*N+j0+4, vC7);
+        vst1q_f16(Ch+(i0+0)*N+j0+8, vC8);
+        vst1q_f16(Ch+(i0+1)*N+j0+8, vC9);
+        vst1q_f16(Ch+(i0+2)*N+j0+8, vC10);
+        vst1q_f16(Ch+(i0+3)*N+j0+8, vC11);
+        vst1q_f16(Ch+(i0+0)*N+j0+12, vC12);
+        vst1q_f16(Ch+(i0+1)*N+j0+12, vC13);
+        vst1q_f16(Ch+(i0+2)*N+j0+12, vC14);
+        vst1q_f16(Ch+(i0+3)*N+j0+12, vC15);
     }
 }
 
